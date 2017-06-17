@@ -1,13 +1,10 @@
-<<<<<<< Updated upstream
-from flask import request, redirect, render_template
-from .main import app
-=======
 from flask import (
-    render_template, flash,jsonify,
+    render_template, flash, jsonify, current_app as app,
     request, redirect, session, url_for)
-from .main import app, login_manager
->>>>>>> Stashed changes
-from . import models
+from flask_login import LoginManager
+from . import models, forms
+login_manager = LoginManager()
+login_manager.login_view = "login"
 
 from flask_login import login_required, logout_user
 
@@ -29,16 +26,10 @@ value = 0
 @app.route('/search')
 @app.route('/results.html')
 def search():
-<<<<<<< Updated upstream
-    site = request.args.get('site','')
-    data = models.SearchResult.search(site)    
-    return render_template('results.html', results = data, search_input=site)
-=======
     site = request.args.get('site', '')
     data = models.SearchResult.search(site)
     return render_template('results.html', results=data, search_input=site)
 
->>>>>>> Stashed changes
 
 @app.route('/admin', methods=['POST', 'GET'])
 @login_required
@@ -49,8 +40,6 @@ def admin_view():
             form.save()
             return redirect('/')
     return render_template('admin.html', form=form)
-<<<<<<< Updated upstream
-=======
 
 
 @app.route("/login/", methods=['POST', 'GET'])
@@ -77,4 +66,3 @@ def logout():
 def all_users():
     users = models.User.query.all()
     return jsonify([dict(email=x.email, id=x.id) for x in users])
->>>>>>> Stashed changes

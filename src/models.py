@@ -1,49 +1,19 @@
 from flask_sqlalchemy import SQLAlchemy
-<<<<<<< Updated upstream
-from sqlalchemy import or_, and_
-=======
 from sqlalchemy import or_, and_, func
 from flask_login.mixins import UserMixin
 
->>>>>>> Stashed changes
 db = SQLAlchemy()
 value = 0
 
-<<<<<<< Updated upstream
-class SearchCounter(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    count = db.Column(db.Integer)
-    result_id = db.Column(db.Integer, db.ForeignKey('search_result.id'))
 
-=======
 class SaveMixin(object):
->>>>>>> Stashed changes
     def save(self):
         db.session.add(self)
         db.session.commit()
         return self
 
-<<<<<<< Updated upstream
-    def increment(self):
-        self.count += 1
-        self.save()
 
-    def reset(self):
-        self.count = 0
-        self.save()
-
-
-
-    @classmethod
-    def create(cls, **kwargs):
-        aa = cls(**kwargs)
-        aa.save()
-        return aa
-
-class SearchResult(db.Model):
-=======
 class SearchResult(SaveMixin, db.Model):
->>>>>>> Stashed changes
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100))
     url = db.Column(db.String)
@@ -52,20 +22,12 @@ class SearchResult(SaveMixin, db.Model):
     def __repr__(self):
         return "<SearchResult {}>".format(self.title)
 
-
     def increment_counter(self):
         self.counter.increment()
 
     @property
     def counter(self):
         result = SearchCounter.query.filter(
-<<<<<<< Updated upstream
-            SearchCounter.result_id==self.id).first()
-        if not result:
-            result = SearchCounter(result_id=self.id, count=0).save()
-        return result
-
-=======
             SearchCounter.result_id == self.id).first()
         if not result:
             result = SearchCounter.create(
@@ -75,15 +37,12 @@ class SearchResult(SaveMixin, db.Model):
     def increment_counter(self):
         return self.counter.increment()
 
->>>>>>> Stashed changes
     @classmethod
     def create(cls, **kwargs):
         new_data = SearchResult(**kwargs)
         new_data.save()
 
     @classmethod
-<<<<<<< Updated upstream
-=======
     def search(cls, search_string=None):
         query = cls.query
         global value
@@ -93,7 +52,7 @@ class SearchResult(SaveMixin, db.Model):
             title_query = cls.title.ilike(search_query)
             content_query = cls.summary.ilike(search_query)
             query = (query.filter(or_(title_query, content_query))).all()
-        if len(query) > 0:
+        if query.count() > 0:
             for i in query:
                 i.increment_counter()
                 if value == 0:
@@ -104,7 +63,6 @@ class SearchResult(SaveMixin, db.Model):
         return query
 
     @classmethod
->>>>>>> Stashed changes
     def populate_with_data(cls):
         data = {
             "title": "Jinja",
@@ -121,29 +79,12 @@ class SearchResult(SaveMixin, db.Model):
         inst = cls(**data)
         inst.save()
 
-<<<<<<< Updated upstream
-    @classmethod
-    def search(cls, site):
-        # filter_query =
-        split_result = site.split(" ")
-        result_title = [cls.title.contains(x) for x in split_result]
-        result_summary = [cls.summary.contains(y) for y in split_result]
-        query1 = and_(*result_title)
-        query2 = and_(*result_summary)
-        filter_query = or_(query1, query2)
-        data =  cls.query.filter(filter_query).all()
-        if len(data) > 0:
-            for i in data:
-                i.increment_counter()
-        return data
-=======
 
 class SearchCounter(SaveMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     count = db.Column(db.Integer)
     count_per_session = db.Column(db.Integer)
     result_id = db.Column(db.Integer, db.ForeignKey('search_result.id'))
-
 
     @classmethod
     def create(cls, **kwargs):
@@ -168,9 +109,11 @@ class SearchCounter(SaveMixin, db.Model):
         self.save()
 
 
-class User(UserMixin,SaveMixin, db.Model):
+class User(UserMixin, SaveMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(70))
-    
-    
->>>>>>> Stashed changes
+    first_name = db.Column(db.String())
+
+    @property
+    def slug(self):
+        return self.first_name.lower()

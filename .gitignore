@@ -3,3 +3,4 @@ venv/
 startup.sh
 *pyc
 *__pycache__
+*test.db

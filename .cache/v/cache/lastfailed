@@ -1,0 +1,3 @@
+{
+  "tests/test_views.py::LoginViewTestCase::test_login_functionality_works": true
+}
