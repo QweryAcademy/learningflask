@@ -2,3 +2,8 @@ Flask==0.12.1
 Flask-SQLAlchemy==2.2
 Flask-WTF==0.14.2
 Flask-Migrate==2.0.4
+<<<<<<< Updated upstream
+=======
+flask-login==0.4.0
+flask-debugtoolbar==0.10.1
+>>>>>>> Stashed changes
